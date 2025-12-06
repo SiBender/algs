@@ -3,13 +3,39 @@ package net.bondarik;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.*;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
+
+
     public static void main(String[] args) throws IOException {
+        int awse = (int) Math.pow(10, 4);
+
+        List<Integer> stackData = List.of(9,6,5,4,2,1,1,1,1,1,1);
+
+        TreeSet<Integer> sortedValues = new TreeSet<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return Integer.compare(stackData.get(o2), stackData.get(o1));
+               /* int compareResult = Integer.compare(stackData.get(o2), stackData.get(o1));
+                return compareResult == 0 ? Integer.compare(o2, o1) : compareResult;*/
+            }
+        });
+
+        for (int i = 0; i < stackData.size(); i++) {
+            sortedValues.add(i);
+        }
+
+        System.out.println(sortedValues.first());
+        System.out.println(sortedValues.last());
+        System.out.println(sortedValues.pollLast());
+        System.out.println(sortedValues.pollFirst());
+
 
         String text = "asdz0129";
+        String[] qwe = text.split(" ");
         System.out.println(text.charAt(0));
         System.out.println((int)text.charAt(0));
         System.out.println(text.charAt(2));
@@ -22,10 +48,10 @@ public class Main {
         System.out.println((int)text.charAt(5));
         System.out.println(text.charAt(7));
         System.out.println((int)text.charAt(7));
-        double qwe = 7;
+        double zxc = 7;
         int asd = 123;
 
-        System.out.println(asd / qwe);
+        System.out.println(asd / zxc);
 
         String[] inputData = {"24", "24"};
         inputData[0].charAt(0);
