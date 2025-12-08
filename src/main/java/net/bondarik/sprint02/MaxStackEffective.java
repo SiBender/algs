@@ -4,23 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.TreeSet;
+import java.util.Stack;
 
 public class MaxStackEffective {
 
     private static List<Integer> stackData = new ArrayList<>();
-    private static TreeSet<Integer> sortedValues = new TreeSet<>(new Comparator<Integer>() {
-        @Override
-        public int compare(Integer o1, Integer o2) {
-            //упорядочиваем по возрастанию
-            //второе условие нужно чтобы хранить в сере одинаковые значение с разными индексами
-            int compareResult = Integer.compare(stackData.get(o1), stackData.get(o2));
-            return compareResult == 0 ? Integer.compare(o1, o2) : compareResult;
-
-        }
-    });
+    private static Stack<Integer> leftMaxValues = new Stack<>();
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -46,18 +36,23 @@ public class MaxStackEffective {
     }
 
     private static void push(int value) {
+        if (leftMaxValues.isEmpty()) {
+            leftMaxValues.push(value);
+        } else if (value >= leftMaxValues.peek()) {
+            leftMaxValues.push(value);
+        }
+
         stackData.add(value);
-        int newIndex = stackData.size() - 1;
-        sortedValues.add(newIndex);
     }
 
     private static void pop() {
         if (stackData.isEmpty()) {
             System.out.println("error");
         } else {
-            int positionToRemove = stackData.size() - 1;
-            sortedValues.remove(positionToRemove);
-            stackData.remove(positionToRemove);
+            int removedValue = stackData.remove(stackData.size() - 1);
+            if (leftMaxValues.peek() == removedValue) {
+                leftMaxValues.pop();
+            }
         }
     }
 
@@ -73,7 +68,7 @@ public class MaxStackEffective {
         if (stackData.isEmpty()) {
             System.out.println("None");
         } else {
-            System.out.println(stackData.get(sortedValues.last()));
+            System.out.println(leftMaxValues.peek() );
         }
     }
 }
