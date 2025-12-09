@@ -1,4 +1,4 @@
-//https://contest.yandex.ru/contest/22781/run-report/152868440/
+//https://contest.yandex.ru/contest/22781/run-report/153152132/
 
 /**
 -- ПРИНЦИП РАБОТЫ --
@@ -78,37 +78,34 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringJoiner;
 
-public class RingBufferDeque {
+public class DequeSolution {
     private static final String ERROR_MESSAGE = "error";
 
-    private static int head = 0; //first element | front
-    private static int tail = 0; //last element  | back
-    private static int[] data;
-    private static int maxSize;
-    private static int currentSize = 0;
+    private static RingBufferedDeque deque;
 
     private static StringJoiner result = new StringJoiner(System.lineSeparator());
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int inputCommandsCount = Integer.parseInt(reader.readLine());
-        maxSize = Integer.parseInt(reader.readLine());
-        data = new int[maxSize];
+        int dequeMaxSize = Integer.parseInt(reader.readLine());
+
+        deque = new RingBufferedDeque(dequeMaxSize);
 
         for (int i = 0; i < inputCommandsCount; i++) {
             String[] commandData = reader.readLine().split(" ");
             switch (commandData[0]) {
                 case "push_back":
-                    push_back(Integer.parseInt(commandData[1]));
+                    pushBack(Integer.parseInt(commandData[1]));
                     break;
                 case "push_front":
-                    push_front(Integer.parseInt(commandData[1]));
+                    pushFront(Integer.parseInt(commandData[1]));
                     break;
                 case "pop_front":
-                    pop_front();
+                    popFront();
                     break;
                 case "pop_back":
-                    pop_back();
+                    popBack();
                     break;
             }
         }
@@ -116,44 +113,105 @@ public class RingBufferDeque {
         System.out.println(result);
     }
 
-    private static void push_back(int val) {
-        if (currentSize == maxSize) {
+    private static void pushBack(int val) {
+        if (!deque.pushBack(val)) {
             result.add(ERROR_MESSAGE);
+        }
+    }
+
+    private static void pushFront(int val) {
+        if (!deque.pushFront(val)) {
+            result.add(ERROR_MESSAGE);
+        }
+    }
+
+    private static void popFront() {
+        if (!deque.isEmpty()) {
+            result.add(String.valueOf(deque.popFront()));
+        } else {
+            result.add(ERROR_MESSAGE);
+        }
+    }
+
+    private static void popBack() {
+        if (!deque.isEmpty()) {
+            result.add(String.valueOf(deque.popBack()));
+        } else {
+            result.add(ERROR_MESSAGE);
+        }
+    }
+}
+
+class RingBufferedDeque {
+    private static final String EMPTY_QUE_ERROR_MESSAGE = "Очередь пуста. Невозможно извлечь элемент";
+
+    private int head; //first element | front
+    private int tail; //last element  | back
+    private final int[] data;
+    private final int maxSize;
+    private int currentSize;
+
+    public RingBufferedDeque(int maxSize) {
+        this.maxSize = maxSize;
+        this.data = new int[maxSize];
+        this.head = 0;
+        this.tail = 0;
+        this.currentSize = 0;
+    }
+
+    public boolean isEmpty() {
+        return currentSize == 0;
+    }
+
+    public boolean pushBack(int val) {
+        if (currentSize == maxSize) {
+            return false;
         } else {
             data[tail] = val;
             currentSize++;
             tail = (tail + 1) % maxSize;
+            return true;
         }
     }
 
-    private static void push_front(int val) {
+    public boolean pushFront(int val) {
         if (currentSize == maxSize) {
-            result.add(ERROR_MESSAGE);
+            return false;
         } else {
             head = head > 0 ? head - 1 : maxSize - 1;
             data[head] = val;
             currentSize++;
+            return true;
         }
     }
 
-    private static void pop_front() {
+    public int popFront() {
         if (currentSize > 0) {
-            result.add(String.valueOf(data[head]));
+            int extractedValue = data[head];
             head = (head + 1) % maxSize;
             currentSize--;
+            return extractedValue;
         } else {
-            result.add(ERROR_MESSAGE);
+            throw new NoDataException(EMPTY_QUE_ERROR_MESSAGE);
         }
     }
 
-    private static void pop_back() {
+    public int popBack() {
         if (currentSize > 0) {
             int prevElementIndex = tail > 0 ? tail - 1 : maxSize - 1;
-            result.add(String.valueOf(data[prevElementIndex]));
+            int extractedValue = data[prevElementIndex];
             tail = prevElementIndex;
             currentSize--;
+
+            return extractedValue;
         } else {
-            result.add(ERROR_MESSAGE);
+            throw new NoDataException(EMPTY_QUE_ERROR_MESSAGE);
         }
+    }
+}
+
+class NoDataException extends RuntimeException {
+    public NoDataException (String message) {
+        super(message);
     }
 }
