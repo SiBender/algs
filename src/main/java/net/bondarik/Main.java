@@ -11,7 +11,19 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
-        int awse = (int) Math.pow(10, 4);
+        Map<Integer, Integer> segments = new TreeMap<>();
+        segments.put(5, 10);
+        segments.put(4, 10);
+        segments.put(50, 10);
+        segments.put(45, 10);
+        segments.put(1, 10);
+
+        for (var entry : segments.entrySet()) {
+            System.out.println(entry);
+            if (entry.getKey() == 50) {
+                segments.remove(50);
+            }
+        }
 
         List<Integer> stackData = List.of(9,6,5,4,2,1,1,1,1,1,1);
 
