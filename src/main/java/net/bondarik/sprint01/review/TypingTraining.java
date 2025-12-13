@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class TypingTraining {
+
+    private static final int INPUT_ROWS_COUNT = 4;
+
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
@@ -12,7 +15,7 @@ public class TypingTraining {
 
         int[] keysCounter = new int[10];
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < INPUT_ROWS_COUNT; i++) {
             for (char currentKey : reader.readLine().toCharArray()) {
                 if (currentKey != '.') {
                     int value = currentKey - '0';
@@ -22,8 +25,8 @@ public class TypingTraining {
         }
 
         int successRounds = 0;
-        for (int i = 1; i < keysCounter.length; i++) {
-            if (keysCounter[i] > 0 && keysCounter[i] <= maxTypingCapacity) {
+        for (int j : keysCounter) {
+            if (j > 0 && j <= maxTypingCapacity) {
                 successRounds++;
             }
         }
