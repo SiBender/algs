@@ -1,3 +1,5 @@
+// https://contest.yandex.ru/contest/23815/run-report/153640488/
+
 package net.bondarik.sprint03.review.brokenringbufferV2;
 
 public class Solution {

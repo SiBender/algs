@@ -90,5 +90,7 @@ public class Main {
         System.out.println();
         System.out.println(big2 * big2);
         System.out.println((int) Math.sqrt((big/2 - 2) * (big/2 - 2)));
+
+
     }
 }
