@@ -17,50 +17,26 @@ public class PrefixHash {
         base = Long.parseLong(reader.readLine());
         mod = Long.parseLong(reader.readLine());
 
+        String input = reader.readLine();
 
         long prevHash = 0;
         long newHash = 0;
         cache.put(0, newHash);
-
-
-        String input = reader.readLine();
-
-
-        int commandsCount = Integer.parseInt(reader.readLine());
-        int[] commands = new int[commandsCount * 2];
-        String[] data;
-
-        int minLeft = 0;
-        int maxRight = 0;
-        for (int i = 0; i < commandsCount; i++) {
-            data = reader.readLine().split(" ");
-
-            commands[i * 2] = Integer.parseInt(data[0]);
-            commands[i * 2 + 1] = Integer.parseInt(data[1]);
-
-            minLeft = Math.min(minLeft, commands[i * 2]);
-            maxRight = Math.max(maxRight, commands[i * 2 + 1]);
-        }
-        minLeft--; //т.к. для префикса нужен элемент left - 1
-
-
-        for (int i = 0; i < maxRight; i++) {
+        for (int i = 0; i < input.length(); i++) {
             newHash = getNextHash(prevHash, input.charAt(i));
-
-            if (i >= minLeft) {
-                cache.put(i + 1, newHash);
-            }
+            cache.put(i + 1, newHash);
 
             prevHash = newHash;
         }
 
-
         StringJoiner result = new StringJoiner(System.lineSeparator());
-        for (int i = 0; i < commandsCount; i++) {
 
+        int commandsCount = Integer.parseInt(reader.readLine());
+        for (int i = 0; i < commandsCount; i++) {
+            String[] data = reader.readLine().split(" ");
             result.add(String.valueOf(
-                    getPrefixHash(commands[i * 2], commands[i * 2 + 1])
-            ));
+                                getPrefixHash(Integer.parseInt(data[0]), Integer.parseInt(data[1]))
+                    ));
         }
 
         System.out.println(result);
@@ -73,22 +49,16 @@ public class PrefixHash {
     private static long getPrefixHash(int left, int right) {
         return (
                 mod + cache.get(right)
-                        - (cache.get(left - 1) * getPowByMod(right - left + 1)) % mod
-        ) % mod;
+                    - (cache.get(left - 1) * getPowByMod(right - left + 1)) % mod
+               ) % mod;
     }
 
     private static long getPowByMod(int power) {
-        //базовый случай с расширением, чтобы уменьшить глубину стека
         if (power == 0) {
             return 1;
-        } else if (power == 1) {
-            return base;
-        } else if (power == 2) {
-            return (base * base) % mod;
-        } else if (power == 3) {
-            return (base * (base * base) % mod ) % mod;
         } else {
-            long halfPowerValue = (getPowByMod(power / 2)) % mod;
+            int halhPower = power / 2;
+            long halfPowerValue = (getPowByMod(halhPower)) % mod;
             if (power % 2 == 1) {
                 return (base * (halfPowerValue * halfPowerValue) % mod) % mod;
             } else {
