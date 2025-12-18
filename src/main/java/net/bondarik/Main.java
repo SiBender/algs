@@ -18,6 +18,9 @@ public class Main {
         segments.put(45, 10);
         segments.put(1, 10);
 
+        int  a = 777836672 + 900545483 + 996739522 + 998367896;
+        int  b = -353438497 + -287067812 + -164339385 + 183367971;
+
         for (var entry : segments.entrySet()) {
             System.out.println(entry);
             if (entry.getKey() == 50) {
