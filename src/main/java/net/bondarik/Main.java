@@ -18,8 +18,20 @@ public class Main {
         segments.put(45, 10);
         segments.put(1, 10);
 
-        int  a = 777836672 + 900545483 + 996739522 + 998367896;
-        int  b = -353438497 + -287067812 + -164339385 + 183367971;
+        Map<Character, Integer> charCount1 = new TreeMap<>();
+        Map<Character, Integer> charCount2 = new TreeMap<>();
+
+        charCount1.put('a', 10);
+        charCount1.put('b', 20);
+        charCount1.put('c', 30);
+
+
+        charCount2.put('c', 30);
+        charCount2.put('b', 20);
+        charCount2.put('a', 10);
+
+
+
 
         for (var entry : segments.entrySet()) {
             System.out.println(entry);
