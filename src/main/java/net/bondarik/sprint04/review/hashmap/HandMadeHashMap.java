@@ -61,7 +61,7 @@
 
 
 
-package net.bondarik.sprint04.review.searchindex.hashmap;
+package net.bondarik.sprint04.review.hashmap;
 
 import java.io.BufferedReader;
 import java.io.IOException;
