@@ -3,8 +3,8 @@ package net.bondarik.sprint04;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /**
@@ -49,9 +49,9 @@ public class LongestCommonSequenceByMatrix3 {
 
         int currentDiagonalLen = maxDiagLen;
         while (currentDiagonalLen > 0) {
-            Map<int[], int[]> diagonals = getAllDiagonalsForLen(currentDiagonalLen);
-            for (Map.Entry<int[], int[]> diag : diagonals.entrySet()) {
-                int currentCommonLen = findMatchLenByDiagonal(diag.getKey(), diag.getValue());
+            List<int[]> diagonals = getAllDiagonalsForLen(currentDiagonalLen);
+            for (int[] diag : diagonals) {
+                int currentCommonLen = findMatchLenByDiagonal(diag[0], diag[1], currentDiagonalLen);
 
                 maxSubarrayLen = Math.max(maxSubarrayLen, currentCommonLen);
 
@@ -70,38 +70,33 @@ public class LongestCommonSequenceByMatrix3 {
         System.out.println(maxSubarrayLen);
     }
 
-    private static Map<int[],int[]> getAllDiagonalsForLen(int currentDiagonalLen) {
-        Map<int[], int[]> result = new HashMap<>();
+    private static List<int[]> getAllDiagonalsForLen(int currentDiagonalLen) {
+        List<int[]> result = new ArrayList<>();
 
         if (currentDiagonalLen == maxDiagLen) {
             int maxLenDiagsCount = Math.abs(line1.length - line2.length) + 1;
             for (int i = 0; i < maxLenDiagsCount; i++) {
                 if (line1.length < line2.length) {
-                    result.put(new int[]{0, line1.length - 1},
-                               new int[]{0 + i,  line1.length - 1 + i});
+                    result.add(new int[]{0, 0 + i});
                 } else {
-                    result.put(new int[]{0 + i, line2.length - 1 + i},
-                               new int[]{0,  line2.length - 1});
+                    result.add(new int[]{0 + i, 0});
                 }
             }
         } else {
-                result.put(new int[]{line1.length - currentDiagonalLen, line1.length - 1},
-                           new int[]{0, currentDiagonalLen - 1}); //верх право
-                result.put(new int[]{0, currentDiagonalLen - 1},
-                           new int[]{line2.length - currentDiagonalLen, line2.length - 1}); // низ лево
+            result.add(new int[]{line1.length - currentDiagonalLen, 0}); //верх право
+            result.add(new int[]{0, line2.length - currentDiagonalLen}); // низ лево
         }
 
         return result;
     }
 
-    private static int findMatchLenByDiagonal(int[] line1subarray, int[] line2subarray) {
+    private static int findMatchLenByDiagonal(int line1point, int line2point, int length) {
         int maxLen = 0;
-        int diagLength = line1subarray[1] - line1subarray[0] + 1;
         //Поиск по диагоналям в виртуальной матрице. Диагонали направлены слева направо сверху вниз \
 
         int currentLen = 0;
-        for (int i = 0; i < diagLength; i++) {
-            if (line1[i + line1subarray[0]] == line2[i + line2subarray[0]]) {
+        for (int i = 0; i < length; i++) {
+            if (line1[i + line1point] == line2[i + line2point]) {
                 currentLen++;
             } else {
                 maxLen = Math.max(maxLen, currentLen);

@@ -10,10 +10,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Mnogogosha {
-    private static final long base = 1000;
-    private static final long mod = 123987123;
+    private static final long base = 7L * 109 * 173;
+    private static final long mod = 101L * 191 * 467 * 1187 * 883;
 
     private static char[] data;
+    private static long basePowerByMod;
 
     private static final Map<Long, List<Integer>> substrings = new HashMap<>();
 
@@ -26,20 +27,23 @@ public class Mnogogosha {
         int minRepeat = Integer.parseInt(params[1]);
         data = reader.readLine().toCharArray();
 
+        basePowerByMod = getPowByMod(subLen - 1);
+
         int left = 0;
-        int right = left + subLen;
+        int right = left + subLen - 1;
 
         long prevHash = -1;
         long hash = 0;
-        while (right <= data.length) {
+        while (right < data.length) {
             if (prevHash < 0) {
                 hash = getHash(left, right);
             } else {
                 hash = getPrefixHash(hash, left, right);
             }
-            put(substrings, left, right);
+            put(substrings, hash, left);
             left++;
             right++;
+            prevHash = hash;
         }
 
         List<Integer> result = new ArrayList<>();
@@ -64,7 +68,7 @@ public class Mnogogosha {
 
     private static long getHash(int left, int right) {
         long hash = 0;
-        while (left < right) {
+        while (left <= right) {
             hash = (hash * base + (int)data[left]) % mod;
             left++;
         }
@@ -73,23 +77,15 @@ public class Mnogogosha {
     }
 
     private static long getPrefixHash(long prevHash, int left, int right) {
-        long prefixHash = (mod + prevHash - data[left - 1] * getPowByMod(right - left)) % mod;
-        return (prefixHash * base + (int)data[right - 1]) % mod;
+        long prefixHash = ((prevHash - data[left - 1] * basePowerByMod) % mod + mod) % mod;
+        return (prefixHash * base + (int)data[right]) % mod;
     }
 
     private static long getPowByMod(int power) {
-        if (power == 0) {
-            return 1;
-        } else {
-            int halhPower = power / 2;
-            long halfPowerValue = (getPowByMod(halhPower)) % mod;
-            if (power % 2 == 1) {
-                return (base * (halfPowerValue * halfPowerValue) % mod) % mod;
-            } else {
-                return (halfPowerValue * halfPowerValue) % mod;
-            }
-
+        long result = 1L;
+        for (int i = 0; i < power; i++) {
+            result = (result * base) % mod;
         }
+        return result;
     }
-
 }
