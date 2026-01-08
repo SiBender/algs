@@ -11,6 +11,13 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
+        BufferedWriter writer1 =  new BufferedWriter(new OutputStreamWriter(System.out));
+
+        writer1.write(1 + System.lineSeparator());
+        writer1.write(2 + System.lineSeparator());
+        writer1.write(3);
+        writer1.flush();
+
         Map<Integer, Integer> segments = new TreeMap<>();
         segments.put(5, 10);
         segments.put(4, 10);
