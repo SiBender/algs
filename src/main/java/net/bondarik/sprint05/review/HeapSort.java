@@ -1,11 +1,31 @@
 package net.bondarik.sprint05.review;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Comparator;
+import java.util.StringJoiner;
 
 public class HeapSort {
+    private static ParticipantHeap heap;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        int dataLength = Integer.parseInt(reader.readLine());
+
+        heap = new ParticipantHeap(dataLength);
+
+        for (int i = 0; i < dataLength; i++) {
+            heap.put(Participant.fromString(reader.readLine()));
+        }
+
+        StringJoiner result = new StringJoiner(System.lineSeparator());
+        for (int i = 0; i < dataLength; i++) {
+            result.add(heap.getFirst().getName());
+        }
+
+        System.out.println(result);
     }
 
 }
@@ -19,6 +39,11 @@ class Participant {
         this.name = name;
         this.points = points;
         this.penalty = penalty;
+    }
+
+    public static Participant fromString(String input) {
+        String[] fields = input.split(" ");
+        return new Participant(fields[0], Integer.parseInt(fields[1]), Integer.parseInt(fields[2]));
     }
 
     public String getName() {
@@ -48,22 +73,22 @@ class ParticipantHeap {
         this.comparator = new Comparator<Participant>() {
             @Override
             public int compare(Participant o1, Participant o2) {
-                //если левый Больше чем правый, то его поднимаем наверх
+                //если левый БОЛЬШЕ чем правый, то его поднимаем наверх
 
-                //у кого больше - обратный результат
-                int result = Integer.compare(o2.getPoints(), o1.getPoints());
+                //у кого больше - return 1
+                int result = Integer.compare(o1.getPoints(), o2.getPoints());
 
                 if (result != 0) {
                     return result;
                 }
-                //у кого меньше - нормальный результат
-                result = Integer.compare(o1.getPenalty(), o2.getPenalty());
+                //у кого меньше - return 1
+                result = Integer.compare(o2.getPenalty(), o1.getPenalty());
                 if (result != 0) {
                     return result;
                 }
 
-                //у кого меньше - нормальный результат
-                return  o1.getName().compareTo(o2.getName());
+                //у кого меньше - return 1
+                return  o2.getName().compareTo(o1.getName());
             }
         };
     }
@@ -84,41 +109,45 @@ class ParticipantHeap {
 
     private void siftUp(int index) {
         int parentIndex = index / 2;
-        if (index >= 1) {
+        if (parentIndex >= 1) {
             int compareResult = comparator.compare(data[index], data[parentIndex]);
-            if (compareResult < 0) {
+            if (compareResult > 0) {
                 swap(index, parentIndex);
                 siftUp(parentIndex);
             }
         }
     }
 
-    private void siftDown(int index) {
-        Participant value = data[index];
-        int leftIndex = index * 2;
-        int rightIndex = index * 2 + 1;
+    private void siftDown(int currentIndex) {
+        Participant value = data[currentIndex];
+        int leftChildIndex = currentIndex * 2;
+        int rightChildIndex = currentIndex * 2 + 1;
 
-        if (leftIndex < lastElementIndex && rightIndex < lastElementIndex) {
-            if (value > data[leftIndex] && value > heap[rightIdx]) {
-                return idx;
+        if (leftChildIndex <= lastElementIndex && rightChildIndex <= lastElementIndex) {
+            int compareWithLeft = comparator.compare(value, data[leftChildIndex]);
+            int compareWithRight = comparator.compare(value, data[rightChildIndex]);
+
+            if (compareWithLeft > 0  && compareWithRight > 0) {
+                return;
             } else {
-                if (heap[leftIdx] < heap[rightIdx]) {
-                    swap(heap, rightIdx, idx);
-                    return siftDown(heap, rightIdx);
+                int leftAndRightCompare = comparator.compare(data[leftChildIndex], data[rightChildIndex]);
+                if (leftAndRightCompare < 0) {
+                    swap(rightChildIndex, currentIndex);
+                    siftDown(rightChildIndex);
                 } else {
-                    swap(heap, leftIdx, idx);
-                    return siftDown(heap, leftIdx);
+                    swap(leftChildIndex, currentIndex);
+                    siftDown(leftChildIndex);
                 }
             }
         } else {
-            if (leftIdx < heap.length && heap[leftIdx] > value) {
-                swap(heap, leftIdx, idx);
-                return siftDown(heap, leftIdx);
-            } else if (rightIdx < heap.length && heap[rightIdx] > value) {
-                swap(heap, rightIdx, idx);
-                return siftDown(heap, rightIdx);
+            if (leftChildIndex <= lastElementIndex && comparator.compare(value, data[leftChildIndex]) < 0) {
+                swap(leftChildIndex, currentIndex);
+                siftDown(leftChildIndex);
+            } else if (rightChildIndex <= lastElementIndex && comparator.compare(value, data[rightChildIndex]) < 0) {
+                swap(rightChildIndex, currentIndex);
+                siftDown(rightChildIndex);
             } else {
-                return idx;
+                return;
             }
         }
     }
