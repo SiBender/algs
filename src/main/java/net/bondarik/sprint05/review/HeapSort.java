@@ -1,3 +1,16 @@
+// https://contest.yandex.ru/contest/24810/run-report/154856049/
+
+/**
+ -- ПРИНЦИП РАБОТЫ --
+
+ -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
+
+ -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
+
+ -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
+
+ */
+
 package net.bondarik.sprint05.review;
 
 import java.io.BufferedReader;
