@@ -18,6 +18,7 @@ public class Main {
         writer1.write(3);
         writer1.flush();
 
+
         Map<Integer, Integer> segments = new TreeMap<>();
         segments.put(5, 10);
         segments.put(4, 10);
