@@ -16,11 +16,12 @@ public class TopologySort {
     private static final Set<Integer> EMPTY_SET = new HashSet<>();
 
     private static Map<Integer, Set<Integer>> graph;
-    private static Set<Integer> notVisitedVertexes = new HashSet<>();
     private static ColorT[] colors;
     private static Stack<Integer> stack = new Stack<>();
 
     private static Stack<Integer> result = new Stack<>();
+
+    private static int lastInlinedBlack = 1;
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -32,7 +33,6 @@ public class TopologySort {
         colors = new ColorT[vertexCount + 1];
         for (int i = 1; i <= vertexCount; i++) {
             colors[i] = ColorT.WHITE;
-            notVisitedVertexes.add(i);
         }
 
 
@@ -47,8 +47,10 @@ public class TopologySort {
 
         DFS(1);
 
-        while (!notVisitedVertexes.isEmpty()) {
-            DFS(getNextUnvisited());
+        while (true) {
+            int next = getNextUnvisited();
+            if (next == -1) break;
+            DFS(next);
         }
 
         StringJoiner output = new StringJoiner(" ");
@@ -60,7 +62,6 @@ public class TopologySort {
 
     private static void DFS(Integer startVertex) {
         stack.push(startVertex);
-        notVisitedVertexes.remove(startVertex);
 
         while (!stack.isEmpty()) {
             Integer current = stack.pop();
@@ -72,7 +73,6 @@ public class TopologySort {
                 for (Integer neighbor : graph.getOrDefault(current, EMPTY_SET)) {
                     if (colors[neighbor] == ColorT.WHITE) {
                         stack.push(neighbor);
-                        notVisitedVertexes.remove(neighbor);
                     }
                 }
 
@@ -95,13 +95,15 @@ public class TopologySort {
     }
 
     private static int getNextUnvisited() {
-        if (notVisitedVertexes.isEmpty()) {
-            return -1;
+        for (int i = lastInlinedBlack; i < colors.length; i++) {
+            if (colors[i] == ColorT.BLACK) {
+                lastInlinedBlack = i;
+            } else if (colors[i] == ColorT.WHITE) {
+                return i;
+            }
         }
 
-        int nextValue = notVisitedVertexes.iterator().next();
-        notVisitedVertexes.remove(nextValue);
-        return nextValue;
+        return -1;
     }
 }
 
