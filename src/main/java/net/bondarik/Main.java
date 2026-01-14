@@ -11,6 +11,21 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
+
+        Queue<Integer> maxQueue = new PriorityQueue<>(Collections.reverseOrder());
+        maxQueue.add(3);
+        maxQueue.add(10);
+        maxQueue.add(2);
+        maxQueue.add(9);
+
+        Iterator<Integer> iterator = maxQueue.iterator();
+
+        for (Integer it : maxQueue) {
+            System.out.println(it);
+        }
+
+        System.out.println(maxQueue.peek());
+
         BufferedWriter writer1 =  new BufferedWriter(new OutputStreamWriter(System.out));
 
         writer1.write(1 + System.lineSeparator());
