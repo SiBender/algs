@@ -12,6 +12,16 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
+        int line = 0;
+        int column = 0;
+        for (int i = 0; i < 100; i++) {
+            line = i / 10;
+            column = i - line * 10;
+
+            System.out.println(line + ":" + column);
+        }
+
+
         Queue<Integer> maxQueue = new PriorityQueue<>(Collections.reverseOrder());
         maxQueue.add(3);
         maxQueue.add(10);

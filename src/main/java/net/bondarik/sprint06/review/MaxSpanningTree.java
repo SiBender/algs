@@ -1,14 +1,68 @@
-// https://contest.yandex.ru/contest/25070/run-report/155165082/
+// https://contest.yandex.ru/contest/25070/run-report/155200976/
 
 /**
  -- ПРИНЦИП РАБОТЫ --
 
+ Для решения используется Алгоритм Прима, поиск минимального остовного дерева.
+ Но т.к. по условию задачи нам нужно найти максимальную стоимость,
+ при выборе следующей вершины вместо минимального веса ребра берем максимальный.
+
  -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
 
+ Алгоритм Прима (в отличии от алгоритма Дийксты) на каждой итерации дает окончательный ответ
+ какая вершина и через какое ребро добавляется к остовному дереву.
+
+ Поэтому при добавлении каждой следующей вершины достаточно просто увеличить общую стоимость на вес нового ребра.
+
+ Так же известно, что корректность алгоритма не зависит от того с какой вершины он стартовал
+
+
+  Оптимизация по времени (были проблемы с Time Limit)
+    Поиск ребер с максимальным весом с каждой итерацией становится всё более затратным,
+    т.к. нужно перебрать ВСЕ ребра из ВСЕХ уже добавленных в остовное дерево вершин.
+    Для сокращения времени поиска ребра хранятся в упорядоченном виде от большего веса к меньшему
+    и как только вес меньше или равен уже найденному поиск по вершине прерывается
+
  -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
+ V - количество вершин
+ E - количество ребер
+
+ Заполнение списка ребер
+ в худшем случае все ребра относятся в одной вершине.
+ А так как мы поддерживаем упорядоченность, сложность будет O(E*log(E))
+
+ Удаление из списка не посещенных и добавление в список посещенных O(1)
+
+ Поиск следующего максимального ребра....
+ Попробую посчитать на примере графа в котором у каждой вершине одинаковое количество ребер
+
+ допустим V = 8, и из каждой вершины по 4 ребра, E = 32
+
+ Количество проверенных ребер на каждом шагу
+ 1 = 0
+ 2 = 4
+ 3 = 8
+ 4 = 12
+ ...
+
+ X = 0 + 4 + 8 + 12 + 16 + 20 + 24 + 28
+
+ X = (E * (V - 1)) / 2 -> O(V * E)
+
+
+ O(E*log(E)) + O(1) + O(V * E)
+ т.к. E*log(E) значительно меньше V * E (V >> log(E))
+ итоговая временная сложность O(V * E)
 
  -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
+  Затраты памяти
+ 1) Список ребер O(E)
+ 2) Список не добавленных ребер
+ 3) Список добавленных ребер
+ Сумма добавленных и не добавленных ребер всегда равна V
+ 2 + 3 = O(V)
 
+ Итого общая пространственная сложность O(V + E)
  */
 
 package net.bondarik.sprint06.review;
@@ -31,8 +85,6 @@ public class MaxSpanningTree {
 
     private static Set<Integer> unvisitedVertexes = new HashSet<>();
     private static Set<Integer> visitedVertexes = new HashSet<>();
-
-    private static int totalWeight = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -57,19 +109,19 @@ public class MaxSpanningTree {
             put(to, from, weight);
         }
 
+        int maxWeight = maxSpanningTreeWeight(1);
 
-        maxSpanningTree(1);
-
-        System.out.println(unvisitedVertexes.isEmpty() ? totalWeight : ERROR_MESSAGE);
+        System.out.println(unvisitedVertexes.isEmpty() ? maxWeight : ERROR_MESSAGE);
 
     }
 
-    private static void maxSpanningTree(int startVertex) {
+    private static int maxSpanningTreeWeight(int startVertex) {
+        int totalWeight = 0;
         unvisitedVertexes.remove(startVertex);
         visitedVertexes.add(startVertex);
 
         while (true) {
-            Edge maxDistanceEdge = getMaxEdge();
+            Edge maxDistanceEdge = getNextMaxEdge();
 
             if (maxDistanceEdge == null) {
                 break;
@@ -83,9 +135,10 @@ public class MaxSpanningTree {
 
         }
 
+        return totalWeight;
     }
 
-    private static Edge getMaxEdge() {
+    private static Edge getNextMaxEdge() {
         int maxDistance = -1;
         int maxDistanceVertex = -1;
 
