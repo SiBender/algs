@@ -11,38 +11,27 @@ public class Solution {
     }
 
     public static List<Node> split(Node root, int k) {
-        if (root == null) {
-            return new ArrayList<>();
+        if (k == 0) {
+            return createPair(null, root);
         }
-
         if (root.getSize() == k) {
             return createPair(root, null);
         }
 
         int leftSize = root.getLeft() != null ? root.getLeft().getSize() : 0;
-        if (leftSize > k) {
+        if (leftSize >= k) {
             Node left = root.getLeft();
             List<Node> leftParents = unlinkLeft(root);
             merge(leftParents, split(left, k));
             return leftParents;
-        } else if (leftSize == k) {
-            List<Node> leftParents = unlinkLeft(root);
-            List<Node> result = createPair(root.getLeft(), null);
-            merge(result, leftParents);
-            return result;
         } else {
             int newK = k - leftSize - 1;
 
-            List<Node> reminder = createPair(null, root.getRight());
+            Node right = root.getRight();
             List<Node> rightParents = unlinkRight(root);
 
-            if (newK == 0) {
-                merge(rightParents, reminder);
-                return rightParents;
-            } else {
-                merge(rightParents, split(rightParents.get(1), newK));
-                return rightParents;
-            }
+            merge(rightParents, split(right, newK));
+            return rightParents;
         }
     }
 
