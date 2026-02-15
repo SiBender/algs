@@ -30,7 +30,7 @@ public class GoldOfLepricons {
                 break;
             }
 
-            int[] currentLineResult = new  int[totalCapacity + 1];
+            int[] currentLineResult = new int[totalCapacity + 1];
 
             for (int capacity = 0; capacity < totalCapacity + 1; capacity++) {
                 if (line == 0) {
