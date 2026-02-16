@@ -1,5 +1,4 @@
-// https://contest.yandex.ru/contest/25597/run-report/156786310/
-
+// https://contest.yandex.ru/contest/25597/run-report/157045666/
 /**
 
  -- ПРИНЦИП РАБОТЫ --
@@ -14,6 +13,9 @@
  Построчно вычисляются расстояния по следующему принципу
  Если А[i] = B[j], то dp[i][j] = dp[i - 1][j - 1]
  Если А[i] != B[j], то новое расстояние складывается из минимального вычисленного поблизости + 1
+
+ Оптимизация по памяти.
+ На каждой итерации достаточно хранить только предыдущую строку из матрицы dp
 
  -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
 
@@ -63,8 +65,10 @@
 
  Память выделяется для входных данных
  А так же для матрицы dp[][]
+ За счет оптимизации храним только одну строку из dp
+ Тогда пространственная сложность линейна относительно длины слов
 
- O(M) + O(N) + O(M * N) = O(M * N) // т.к.  O(M) + O(N) пренебрежимо малы относительно O(M * N)
+ O(L)
 
  */
 
@@ -86,27 +90,27 @@ public class WordsDistanceDP {
         char[] firstArray= firstWord.toCharArray();
         char[] secondArray = secondWord.toCharArray();
 
-        int[][] dp = new  int[firstArray.length + 1][secondArray.length + 1];
+        int[] dp = new int[secondArray.length + 1];
 
-        for (int i = 0; i <= firstArray.length; i++) {
-            dp[i][0] = i;
-        }
-
-        for (int j = 0; j <= secondArray.length; j++) {
-            dp[0][j] = j;
+        for (int i = 0; i <= secondArray.length; i++) {
+            dp[i] = i;
         }
 
         for (int i = 1; i <= firstArray.length; i++) {
+            int[] currentLine = new int[secondArray.length + 1];
+            currentLine[0] = i;
             for (int j = 1; j <= secondArray.length; j++) {
                 if (firstArray[i - 1] == secondArray[j - 1]) {
-                    dp[i][j] = dp[i - 1][j - 1];
-                } else  {
-                    dp[i][j] = minOfThree( dp[i][j - 1], dp[i - 1][j], dp[i - 1][j - 1]) + 1;
+                    currentLine[j] = dp[j - 1];
+                } else {
+                    currentLine[j] = minOfThree(currentLine[j - 1], dp[j], dp[j - 1]) + 1;
                 }
             }
+
+            dp = currentLine;
         }
 
-        System.out.println(dp[firstArray.length][secondArray.length]);
+        System.out.println(dp[dp.length - 1]);
     }
 
     private static int minOfThree(int a, int b, int c) {
